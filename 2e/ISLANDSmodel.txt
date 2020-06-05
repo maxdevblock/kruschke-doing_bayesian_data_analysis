@@ -1,0 +1,8 @@
+
+model {
+  for ( i in 1:7 ) {
+    dTheta[i] = i / 28
+  }
+  theta ~ dcat(dTheta)
+}
+

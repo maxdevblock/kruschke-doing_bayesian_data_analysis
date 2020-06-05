@@ -3,6 +3,8 @@
 #   Kruschke, J. K. (2014). Doing Bayesian Data Analysis: 
 #   A Tutorial with R, JAGS, and Stan. 2nd Edition. Academic Press / Elsevier.
 
+setwd("/Users/massimopierini/GitHub/kruschke-doing_bayesian_data_analysis/2e/")
+
 # Optional generic preliminaries:
 graphics.off() # This closes all of R's graphics windows.
 rm(list=ls())  # Careful! This clears all of R's memory!
@@ -52,6 +54,8 @@ update( jagsModel , n.iter=500 )
 codaSamples = coda.samples( jagsModel , variable.names=c("theta") ,
                             n.iter=3334 )
 save( codaSamples , file=paste0(fileNameRoot,"Mcmc.Rdata") )
+
+plot(codaSamples)
 
 # Examine the chains:
 # Convergence diagnostics:

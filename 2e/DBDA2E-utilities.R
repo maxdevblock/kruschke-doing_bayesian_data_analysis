@@ -47,12 +47,12 @@ if ( nCores < 4 ) {
 
 openGraph = function( width=7 , height=7 , mag=1.0 , ... ) {
   if ( .Platform$OS.type != "windows" ) { # Mac OS, Linux
-    tryInfo = try( X11( width=width*mag , height=height*mag , type="cairo" , 
+    tryInfo = try( quartz( width=width*mag , height=height*mag , 
                         ... ) )
     if ( class(tryInfo)=="try-error" ) {
       lineInput = readline("WARNING: Previous graphics windows will be closed because of too many open windows.\nTO CONTINUE, PRESS <ENTER> IN R CONSOLE.\n")
       graphics.off() 
-      X11( width=width*mag , height=height*mag , type="cairo" , ... )
+      quartz( width=width*mag , height=height*mag , ... )
     }
   } else { # Windows OS
     tryInfo = try( windows( width=width*mag , height=height*mag , ... ) )
@@ -210,7 +210,9 @@ DbdaDensPlot = function( codaObject , parName=varnames(codaObject)[1] , plColors
 
 diagMCMC = function( codaObject , parName=varnames(codaObject)[1] ,
                      saveName=NULL , saveType="jpg" ) {
+  # Colors
   DBDAplColors = c("skyblue","black","royalblue","steelblue")
+  # OpenGraph
   openGraph(height=5,width=7)
   par( mar=0.5+c(3,4,1,0) , oma=0.1+c(0,0,2,0) , mgp=c(2.25,0.7,0) , 
        cex.lab=1.5 )

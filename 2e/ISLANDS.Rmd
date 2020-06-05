@@ -1,0 +1,91 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+Close all plot windows and clear R memory
+
+```{r}
+graphics.off() # This closes all of R's graphics windows.
+rm(list=ls())  # Careful! This clears all of R's memory!
+```
+
+
+Import JAGS and utilities
+
+```{r}
+source("DBDA2E-utilities.R") # Must be in R's current working directory.
+require(rjags)               # Must have previously installed package rjags.
+
+fileNameRoot="Jags-ExampleScript" # For output file names.
+```
+
+Create an array of $\theta$ islands
+
+```{r}
+Theta <- c(1, 2, 3, 4, 5, 6, 7)
+Theta
+sumTheta = sum(Theta)
+dTheta = array(dim=7)
+```
+
+
+Define the model
+
+```{r}
+modelString = "
+model {
+  for ( i in 1:7 ) {
+    dTheta[i] = i / 28
+  }
+  theta ~ dcat(dTheta)
+}
+" # close quote for modelString
+writeLines( modelString , con="ISLANDSmodel.txt" )
+```
+
+
+Choose a random island to start
+
+```{r}
+inits = function(){
+  iThetas = c(1, 0, 0, 0, 0, 0, 0)
+  resampledThetas = sample(iThetas, replace=FALSE)
+  return( list(theta=resampledThetas) )
+}
+```
+
+Define model
+
+```{r}
+jagsModel = jags.model( file="ISLANDSmodel.txt" ,
+                        n.chains=3 , n.adapt=100 )
+```
+
+
+```{r}
+update( jagsModel , n.iter=100 )
+```
+
+
+```{r}
+codaSamples = coda.samples( jagsModel , variable.names=c("theta") , n.iter=5000 )
+```
+
+
+```{r}
+save( codaSamples , file=paste0(fileNameRoot,"McmcISLANDS.Rdata") )
+```
+
+
+```{r}
+diagMCMC( codaObject=codaSamples , parName="theta" )
+saveGraph( file=paste0(fileNameRoot,"ISLANDS") , type="eps" )
+```
+
+
+```{r}
+plot(codaSamples)
+```
+
+
